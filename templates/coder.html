@@ -1,0 +1,60 @@
+<h1>Coder</h1>
+<p class="muted">Look up ICD-10 codes and SNOMED CT concepts, explore the concept hierarchy, and cross-map SNOMED → ICD-10.</p>
+
+<div class="coder">
+
+  <div class="coder-search">
+    <div class="coder-toggle" id="coder-mode-toggle">
+      <button class="coder-toggle-btn active" data-mode="snomed">SNOMED CT</button>
+      <button class="coder-toggle-btn" data-mode="icd10">ICD-10</button>
+    </div>
+
+    <form class="coder-search-form" id="coder-search-form">
+      <input
+        type="text"
+        id="coder-search-input"
+        class="coder-search-input"
+        placeholder="Search SNOMED concepts (e.g. diabetes, heart failure, 44054006)…"
+        autocomplete="off">
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <p class="coder-hint muted" id="coder-hint">
+      Searching SNOMED CT concepts by name or numeric id.
+    </p>
+
+    <ul class="coder-results" id="coder-results"></ul>
+  </div>
+
+  <div class="coder-detail" id="coder-detail">
+    <div class="coder-detail-empty muted" id="coder-detail-empty">
+      Select a result to view its details here.
+    </div>
+
+    <div class="coder-card" id="coder-card" hidden>
+      <div class="coder-card-head">
+        <span class="coder-card-id" id="coder-card-id"></span>
+        <h2 class="coder-card-fsn" id="coder-card-fsn"></h2>
+      </div>
+
+      <div class="coder-section" id="coder-attrs-section" hidden>
+        <h3 class="coder-section-title">Attributes</h3>
+        <dl class="coder-attrs" id="coder-attrs"></dl>
+      </div>
+
+      <div class="coder-section" id="coder-tree-section" hidden>
+        <h3 class="coder-section-title">Hierarchy</h3>
+        <div class="coder-tree" id="coder-tree"></div>
+      </div>
+
+      <div class="coder-section">
+        <h3 class="coder-section-title">ICD-10 cross-map</h3>
+        <div class="coder-crossmap">
+          <button type="button" class="btn btn-accent" id="coder-crossmap-btn">Cross-map to ICD-10</button>
+          <span class="coder-crossmap-result" id="coder-crossmap-result"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
