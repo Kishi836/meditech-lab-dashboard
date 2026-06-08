@@ -53,7 +53,7 @@ SNOMED_ROOT = 404684003
 SNOMED = {
     404684003: {
         "fsn": "Clinical finding (finding)",
-        "children": [362965005, 118234003],
+        "children": [362965005, 118234003, 50043002],
     },
     362965005: {
         "fsn": "Disorder of endocrine system (disorder)",
@@ -83,6 +83,8 @@ SNOMED = {
         "fsn": "Diabetic nephropathy (disorder)",
         "attributes": {
             "finding_site": "Kidney structure (body structure)",
+            # Deliberate compound/dual mapping (not a single valid ICD-10
+            # code) — future consumers should split on " + " if needed.
             "icd10_map":    "N08 + E11.22",
         },
     },
@@ -113,6 +115,10 @@ SNOMED = {
             "icd10_map":    "J18.9",
         },
     },
+    50043002: {
+        "fsn": "Disorder of respiratory system (disorder)",
+        "children": [233604007],
+    },
 }
 
 
@@ -129,11 +135,11 @@ def icd10_lookup(code: str) -> dict:
     normalized = code.strip().upper()
 
     if normalized in ICD10:
-        return {"found": True, "code": normalized, **ICD10[normalized]}
+        return {"found": True, "code": normalized, "note": None, **ICD10[normalized]}
 
     prefix_hits = [c for c in ICD10 if c.startswith(normalized)]
     if prefix_hits:
-        match = prefix_hits[0]
+        match = sorted(prefix_hits)[0]
         return {
             "found": True,
             "code": match,
@@ -141,7 +147,7 @@ def icd10_lookup(code: str) -> dict:
             **ICD10[match],
         }
 
-    return {"found": False, "code": normalized, "desc": "UNKNOWN CODE", "chapter": "?", "block": "?"}
+    return {"found": False, "code": normalized, "desc": "UNKNOWN CODE", "chapter": "?", "block": "?", "note": None}
 
 
 def icd10_search(q: str) -> list[dict]:
@@ -205,9 +211,9 @@ def snomed_to_icd10(concept_id: int) -> str | None:
     if concept is None:
         return None
 
-    attributes = concept.get("attributes")
-    if attributes and "icd10_map" in attributes:
-        return attributes["icd10_map"]
+    icd10_map = concept.get("attributes", {}).get("icd10_map")
+    if icd10_map is not None:
+        return icd10_map
 
     for child_id in concept.get("children", []):
         mapped = snomed_to_icd10(child_id)

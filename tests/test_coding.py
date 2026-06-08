@@ -14,18 +14,30 @@ def test_icd10_lookup_exact_match():
     assert result["found"] is True
     assert result["code"] == "E11.65"
     assert "hyperglycaemia" in result["desc"].lower()
+    assert result["note"] is None
 
 
 def test_icd10_lookup_prefix_match():
     result = coding.icd10_lookup("E11")
     assert result["found"] is True
     assert result["code"].startswith("E11")
+    assert isinstance(result["note"], str)
+
+
+def test_icd10_lookup_prefix_match_is_deterministic_alphabetical_winner():
+    # Multiple E11.x codes exist (E11.22, E11.31, E11.641, E11.65, E11.9).
+    # The match must be the alphabetically-first code, not whatever happens
+    # to be first in dict insertion order — pin the exact value so future
+    # data reordering can't silently change the chosen winner.
+    result = coding.icd10_lookup("E11")
+    assert result["code"] == "E11.22"
 
 
 def test_icd10_lookup_not_found():
     result = coding.icd10_lookup("ZZZ")
     assert result["found"] is False
     assert result["code"] == "ZZZ"
+    assert result["note"] is None
 
 
 def test_icd10_lookup_is_case_insensitive_and_strips_whitespace():
@@ -75,6 +87,12 @@ def test_snomed_get_unknown_concept_returns_none():
 
 def test_snomed_ancestors_ends_at_root():
     ancestors = coding.snomed_ancestors(421893009)
+    assert len(ancestors) > 0
+    assert ancestors[-1] == 404684003
+
+
+def test_snomed_ancestors_pneumonia_reaches_root():
+    ancestors = coding.snomed_ancestors(233604007)
     assert len(ancestors) > 0
     assert ancestors[-1] == 404684003
 
