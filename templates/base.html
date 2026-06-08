@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Meditech Lab — Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">Meditech<span>Lab</span></div>
+
+      <nav class="nav">
+        <button class="nav-item active" data-panel="patients">
+          <span class="nav-icon">&#128100;</span> Patients
+        </button>
+        <button class="nav-item" data-panel="extractor">
+          <span class="nav-icon">&#128269;</span> Extractor
+        </button>
+        <button class="nav-item" data-panel="coder">
+          <span class="nav-icon">&#127991;</span> Coder
+        </button>
+        <button class="nav-item" data-panel="pipeline">
+          <span class="nav-icon">&#9881;</span> Pipeline
+        </button>
+      </nav>
+
+      <div class="status-strip">
+        <div class="status-row">
+          <span class="dot" id="dot-postgres"></span>
+          <span class="status-label">Postgres</span>
+        </div>
+        <div class="status-row">
+          <span class="dot" id="dot-es"></span>
+          <span class="status-label">Elasticsearch</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section class="panel active" id="panel-patients">
+        <h1>Patients</h1>
+        <p class="muted">Patient records and search will live here.</p>
+      </section>
+
+      <section class="panel" id="panel-extractor">
+        <h1>Extractor</h1>
+        <p class="muted">Clinical text / entity extraction tools will live here.</p>
+      </section>
+
+      <section class="panel" id="panel-coder">
+        <h1>Coder</h1>
+        <p class="muted">ICD / clinical coding assistance will live here.</p>
+      </section>
+
+      <section class="panel" id="panel-pipeline">
+        <h1>Pipeline</h1>
+        <p class="muted">Ingestion / processing pipeline view will live here.</p>
+      </section>
+    </main>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
