@@ -27,12 +27,34 @@ def get_conn():
     return _conn
 
 
+def _run(sql, params, fetch):
+    """
+    Shared core for query()/execute(): run `sql` and hand the cursor to
+    `fetch` to extract the result.
+
+    If a connection/operational error occurs (e.g. the DB container
+    restarted mid-session and the cached connection has gone stale),
+    drop the cached connection and retry exactly once with a fresh one.
+    Genuine SQL errors (bad query, constraint violation, etc.) are not
+    connection problems — they propagate immediately without retrying.
+    """
+    global _conn
+    try:
+        conn = get_conn()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(sql, params)
+            return fetch(cur)
+    except (psycopg2.OperationalError, psycopg2.InterfaceError):
+        _conn = None
+        conn = get_conn()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(sql, params)
+            return fetch(cur)
+
+
 def query(sql, params=()):
     """Run a parameterized SELECT and return rows as a list[dict]."""
-    conn = get_conn()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(sql, params)
-        return [dict(row) for row in cur.fetchall()]
+    return _run(sql, params, lambda cur: [dict(row) for row in cur.fetchall()])
 
 
 def execute(sql, params=()):
@@ -42,13 +64,13 @@ def execute(sql, params=()):
     If the statement has a RETURNING clause, the returned row is given
     back as a dict; otherwise None is returned.
     """
-    conn = get_conn()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(sql, params)
+    def _fetch(cur):
         if cur.description:  # statement returned rows (e.g. RETURNING ...)
             row = cur.fetchone()
             return dict(row) if row is not None else None
         return None
+
+    return _run(sql, params, _fetch)
 
 
 def ping():
