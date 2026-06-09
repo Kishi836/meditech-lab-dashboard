@@ -30,10 +30,6 @@
     return div.innerHTML.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   }
 
-  function fmtDate(value) {
-    return value ? String(value) : "—";
-  }
-
   function fmt(value) {
     return value == null || value === "" ? "—" : String(value);
   }
@@ -189,11 +185,11 @@
       .map(
         (e) => `
           <tr>
-            <td>${escapeHtml(fmtDate(e.enc_date))}</td>
+            <td>${escapeHtml(fmt(e.enc_date))}</td>
             <td>${escapeHtml(fmt(e.enc_type))}</td>
             <td>${escapeHtml(fmt(e.department))}</td>
             <td>${escapeHtml(fmt(e.attending_dr))}</td>
-            <td>${escapeHtml(fmtDate(e.discharge_dt))}</td>
+            <td>${escapeHtml(fmt(e.discharge_dt))}</td>
           </tr>`
       )
       .join("");
@@ -218,7 +214,7 @@
             <tr>
               <td class="patients-mono">${escapeHtml(fmt(c.icd10_code))}</td>
               <td>${escapeHtml(fmt(c.description))}</td>
-              <td>${escapeHtml(fmtDate(c.onset_date))}</td>
+              <td>${escapeHtml(fmt(c.onset_date))}</td>
               <td><span class="patients-status patients-status-${escapeHtml(c.status)}">${escapeHtml(fmt(c.status))}</span></td>
             </tr>`
         )
@@ -242,8 +238,8 @@
               <td>${escapeHtml(fmt(m.drug_name))}</td>
               <td>${escapeHtml(fmt(m.dose))}</td>
               <td>${escapeHtml(fmt(m.frequency))}</td>
-              <td>${escapeHtml(fmtDate(m.start_date))}</td>
-              <td>${escapeHtml(fmtDate(m.end_date))}</td>
+              <td>${escapeHtml(fmt(m.start_date))}</td>
+              <td>${escapeHtml(fmt(m.end_date))}</td>
             </tr>`
         )
         .join("");
@@ -283,7 +279,7 @@
       .map(
         (o) => `
           <tr>
-            <td>${escapeHtml(fmtDate(o.obs_date))}</td>
+            <td>${escapeHtml(fmt(o.obs_date))}</td>
             <td>${escapeHtml(fmt(o.display_name))}</td>
             <td class="patients-mono">${escapeHtml(o.value == null ? "—" : o.value)}</td>
             <td>${escapeHtml(fmt(o.unit))}</td>
