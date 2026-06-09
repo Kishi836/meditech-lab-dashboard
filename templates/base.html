@@ -45,8 +45,7 @@
       </section>
 
       <section class="panel" id="panel-extractor">
-        <h1>Extractor</h1>
-        <p class="muted">Clinical text / entity extraction tools will live here.</p>
+        {% include "extractor.html" %}
       </section>
 
       <section class="panel" id="panel-coder">
@@ -61,6 +60,7 @@
   </div>
 
   <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/extractor.js') }}"></script>
   <script src="{{ url_for('static', filename='js/coder.js') }}"></script>
 </body>
 </html>

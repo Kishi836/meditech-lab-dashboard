@@ -1,0 +1,63 @@
+<h1>Extractor</h1>
+<p class="muted">Paste a clinical note and extract structured entities — vitals, labs, and ICD-10 codes — highlighted in place with their character offsets.</p>
+
+<div class="extractor">
+
+  <div class="extractor-input">
+    <textarea
+      id="extractor-text"
+      class="extractor-textarea"
+      spellcheck="false"
+      rows="22">DISCHARGE SUMMARY — Bangalore City Hospital
+Patient: Rajan Menon, 54M   |  MRN: PT-2024-001   |  Date: 2024-06-03
+Attending: Dr. Priya Sharma, MD Endocrinology
+
+PRESENTING COMPLAINT:
+Patient presented with a 4-day history of polydipsia, polyuria, and blurred
+vision. He also reported fatigue and mild lower-limb tingling over 3 weeks.
+Known case of Type 2 Diabetes Mellitus, poorly controlled.
+
+EXAMINATION:
+BP: 148/92 mmHg. HR: 88 bpm. SpO2: 98% on room air. Weight: 84 kg.
+Bilateral pedal oedema (1+). Fundoscopy shows early background retinopathy.
+
+INVESTIGATIONS:
+Fasting glucose: 182 mg/dL (ref: 70–99). HbA1c: 8.9% (ref: <5.7%).
+Urine microalbumin: 42 mg/g creatinine (borderline elevated).
+CBC: WBC 7.8, Hb 13.2, platelets 215K — all within normal limits.
+Creatinine: 1.1 mg/dL. eGFR: 68 mL/min/1.73m² (G2 — mildly decreased).
+
+ASSESSMENT & PLAN:
+1. Type 2 Diabetes Mellitus (E11.65) — hyperglycaemia with hyperlipidaemia.
+   Increased Metformin to 1000mg BD. Added Glipizide 5mg OD.
+2. Diabetic nephropathy — early stage (N08). Monitor eGFR quarterly.
+3. Hypertension (I10): continue Amlodipine 5mg OD, add Ramipril 2.5mg.
+
+FOLLOW-UP: 4 weeks with Dr. Sharma. Repeat HbA1c in 3 months.
+DIET: Low glycaemic index diet. Avoid processed foods and refined sugar.</textarea>
+
+    <div class="extractor-actions">
+      <button type="button" class="btn btn-primary" id="extractor-run">Extract</button>
+      <span class="extractor-status muted" id="extractor-status"></span>
+    </div>
+  </div>
+
+  <div class="extractor-output">
+    <div class="extractor-section">
+      <h3 class="extractor-section-title">Highlighted note</h3>
+      <pre class="extractor-highlight" id="extractor-highlight"><span class="muted">Click Extract to highlight entities.</span></pre>
+    </div>
+
+    <div class="extractor-section">
+      <h3 class="extractor-section-title">Entities</h3>
+      <table class="extractor-table" id="extractor-table" hidden>
+        <thead>
+          <tr><th>Label</th><th>Value</th><th>Start</th><th>End</th></tr>
+        </thead>
+        <tbody id="extractor-table-body"></tbody>
+      </table>
+      <p class="extractor-empty muted" id="extractor-empty">No entities yet.</p>
+    </div>
+  </div>
+
+</div>
