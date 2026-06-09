@@ -268,6 +268,22 @@ def hl7_send():
     return jsonify({"hl7": state["raw"], "msg_id": msg_id, "stages": stages})
 
 
+@bp.route("/hl7/preview", methods=["POST"])
+def hl7_preview():
+    """Build (but do not persist) an HL7 message — drives the live preview."""
+    body = request.get_json(silent=True) or {}
+    patient_id = (body.get("patient_id") or "").strip()
+    msg_type = (body.get("msg_type") or "").strip()
+
+    if msg_type not in VALID_TYPES:
+        return jsonify({"error": f"unknown msg_type {msg_type!r}"}), 400
+    patient = _load_patient(patient_id)
+    if patient is None:
+        return jsonify({"error": f"unknown patient id {patient_id}"}), 404
+
+    return jsonify({"hl7": build_hl7(patient, msg_type)})
+
+
 # ───────────────────────── feed / reset ─────────────────────────
 
 @bp.route("/pipeline/feed")

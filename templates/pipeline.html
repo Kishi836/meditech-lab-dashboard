@@ -1,0 +1,66 @@
+<h1>Pipeline</h1>
+<p class="muted">Build an HL7 v2.5 message from a real patient record and watch it flow through the hybrid pipeline — <strong>real</strong> Postgres + archive, <strong>simulated</strong> NiFi / Kibana / MinIO.</p>
+
+<div class="pipeline">
+
+  <!-- compose: controls + live HL7 preview -->
+  <div class="pipeline-compose">
+    <div class="pipeline-controls">
+      <div class="pipeline-field">
+        <label for="pipeline-patient">Patient</label>
+        <select id="pipeline-patient" class="pipeline-select"></select>
+      </div>
+      <div class="pipeline-field">
+        <label for="pipeline-msgtype">Message type</label>
+        <select id="pipeline-msgtype" class="pipeline-select">
+          <option value="ADT_A01">ADT^A01 — Admit</option>
+          <option value="ADT_A03">ADT^A03 — Discharge</option>
+          <option value="ORU_R01" selected>ORU^R01 — Lab result</option>
+          <option value="ORM_O01">ORM^O01 — Pharmacy order</option>
+        </select>
+      </div>
+      <div class="pipeline-buttons">
+        <button id="pipeline-send" class="btn btn-primary">Send &#9656;</button>
+        <button id="pipeline-reset" class="btn btn-accent">Reset</button>
+      </div>
+      <div class="pipeline-status" id="pipeline-status"></div>
+    </div>
+
+    <div class="pipeline-preview">
+      <div class="pipeline-preview-title">HL7 preview</div>
+      <pre class="pipeline-preview-body" id="pipeline-preview">Select a patient to preview a message…</pre>
+    </div>
+  </div>
+
+  <!-- animated six-stage diagram -->
+  <div class="pipeline-stages" id="pipeline-stages"></div>
+
+  <!-- live feed + analytics -->
+  <div class="pipeline-bottom">
+    <div class="pipeline-feed-pane">
+      <div class="pipeline-pane-title">Live feed</div>
+      <ul class="pipeline-feed" id="pipeline-feed">
+        <li class="pipeline-feed-empty muted">No messages sent yet.</li>
+      </ul>
+    </div>
+
+    <div class="pipeline-analytics">
+      <div class="pipeline-pane-title">Analytics</div>
+      <div class="pipeline-charts">
+        <div class="pipeline-chart-card">
+          <div class="pipeline-chart-title">Diagnoses by department</div>
+          <div class="pipeline-chart-wrap"><canvas id="pipeline-chart-dept"></canvas></div>
+        </div>
+        <div class="pipeline-chart-card">
+          <div class="pipeline-chart-title">Messages sent (this session)</div>
+          <div class="pipeline-chart-wrap"><canvas id="pipeline-chart-msgs"></canvas></div>
+        </div>
+      </div>
+      <div class="pipeline-critical">
+        <div class="pipeline-chart-title">Critical values <span class="muted">(latest per patient)</span></div>
+        <ul class="pipeline-critical-list" id="pipeline-critical"></ul>
+      </div>
+    </div>
+  </div>
+
+</div>

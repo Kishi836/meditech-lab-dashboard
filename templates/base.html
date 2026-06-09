@@ -52,8 +52,7 @@
       </section>
 
       <section class="panel" id="panel-pipeline">
-        <h1>Pipeline</h1>
-        <p class="muted">Ingestion / processing pipeline view will live here.</p>
+        {% include "pipeline.html" %}
       </section>
     </main>
   </div>
@@ -63,5 +62,6 @@
   <script src="{{ url_for('static', filename='js/patients.js') }}"></script>
   <script src="{{ url_for('static', filename='js/extractor.js') }}"></script>
   <script src="{{ url_for('static', filename='js/coder.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/pipeline.js') }}"></script>
 </body>
 </html>
