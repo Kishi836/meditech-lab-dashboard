@@ -11,9 +11,9 @@
   "use strict";
 
   const FLAG_COLOR = {
-    high: "#f85149",   // --red
-    low: "#58a6ff",    // --blue
-    normal: "#3fb950", // --green
+    high: "#c0392b",   // --red
+    low: "#2563eb",    // --blue
+    normal: "#0f8a5f", // --green
   };
 
   let selectedId = null;
@@ -355,8 +355,8 @@
             },
           },
           scales: {
-            x: { ticks: { color: "#8b949e" }, grid: { color: "#30363d" } },
-            y: { ticks: { color: "#8b949e" }, grid: { color: "#30363d" } },
+            x: { ticks: { color: "#6b7a8d" }, grid: { color: "#e5e9f0" } },
+            y: { ticks: { color: "#6b7a8d" }, grid: { color: "#e5e9f0" } },
           },
         },
       });

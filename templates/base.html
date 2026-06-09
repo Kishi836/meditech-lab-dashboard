@@ -12,7 +12,10 @@
       <div class="brand">Meditech<span>Lab</span></div>
 
       <nav class="nav">
-        <button class="nav-item active" data-panel="patients">
+        <button class="nav-item active" data-panel="help">
+          <span class="nav-icon">&#8505;</span> Help
+        </button>
+        <button class="nav-item" data-panel="patients">
           <span class="nav-icon">&#128100;</span> Patients
         </button>
         <button class="nav-item" data-panel="extractor">
@@ -39,7 +42,11 @@
     </aside>
 
     <main class="content">
-      <section class="panel active" id="panel-patients">
+      <section class="panel active" id="panel-help">
+        {% include "help.html" %}
+      </section>
+
+      <section class="panel" id="panel-patients">
         {% include "patients.html" %}
       </section>
 

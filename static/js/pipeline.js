@@ -271,11 +271,11 @@
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          x: { ticks: { color: "#8b949e" }, grid: { color: "#30363d" } },
+          x: { ticks: { color: "#6b7a8d" }, grid: { color: "#e5e9f0" } },
           y: {
             beginAtZero: true,
-            ticks: { color: "#8b949e", precision: 0 },
-            grid: { color: "#30363d" },
+            ticks: { color: "#6b7a8d", precision: 0 },
+            grid: { color: "#e5e9f0" },
           },
         },
       },
@@ -291,7 +291,7 @@
           "dept",
           rows.map((r) => r.department),
           rows.map((r) => r.count),
-          "#58a6ff"
+          "#2563eb"
         );
       })
       .catch(() => {});
@@ -306,7 +306,7 @@
           "msgs",
           rows.map((r) => r.msg_type),
           rows.map((r) => r.count),
-          "#3fb950"
+          "#0f8a5f"
         );
       })
       .catch(() => {});

@@ -1,0 +1,67 @@
+<h1>Welcome to Meditech Lab</h1>
+<p class="muted">A hands-on dashboard for the four core pillars of medical informatics, running over Bangalore City Hospital's real PostgreSQL database. Pick a tab on the left to explore — here's what each one does and what to try first.</p>
+
+<div class="help-flow">
+  <span>Store data</span>
+  <em>&rarr;</em>
+  <span>Extract from notes</span>
+  <em>&rarr;</em>
+  <span>Code to standards</span>
+  <em>&rarr;</em>
+  <span>Exchange between systems</span>
+</div>
+
+<div class="help-grid">
+
+  <div class="help-card">
+    <div class="help-card-head">
+      <span class="help-card-icon">&#128100;</span>
+      <h2>Patients</h2>
+    </div>
+    <p class="help-what">The hospital's electronic health record. Search the registry and open a patient to see demographics, past visits, lab-result trend charts, conditions and medications — read live from Postgres.</p>
+    <p class="help-concept"><span class="help-label">Concept</span> Storing &amp; querying structured patient data.</p>
+    <p class="help-try"><span class="help-try-icon">&#9656;</span> Try: search <code>Menon</code>, open <strong>Rajan Menon</strong>, then the <strong>Labs</strong> tab to watch his HbA1c climb over the years.</p>
+  </div>
+
+  <div class="help-card">
+    <div class="help-card-head">
+      <span class="help-card-icon">&#128269;</span>
+      <h2>Extractor</h2>
+    </div>
+    <p class="help-what">Paste a free-text clinical note — the messy way doctors actually write — and it pulls out the structured bits (vital signs, lab values, diagnosis codes), highlights them in the text, and lists them in a table.</p>
+    <p class="help-concept"><span class="help-label">Concept</span> Clinical information extraction — turning unstructured text into data.</p>
+    <p class="help-try"><span class="help-try-icon">&#9656;</span> Try: load the sample note, hit <strong>Extract</strong>, and see the vitals and codes light up.</p>
+  </div>
+
+  <div class="help-card">
+    <div class="help-card-head">
+      <span class="help-card-icon">&#127991;</span>
+      <h2>Coder</h2>
+    </div>
+    <p class="help-what">Look up <strong>ICD-10</strong> diagnosis codes and <strong>SNOMED</strong> clinical terms, browse how a concept fits in its hierarchy, and cross-map between the two coding systems.</p>
+    <p class="help-concept"><span class="help-label">Concept</span> Standardized medical coding &amp; terminology.</p>
+    <p class="help-try"><span class="help-try-icon">&#9656;</span> Try: search <code>diabetes</code>, open a concept, and see its ICD-10 cross-map (e.g. <code>E11.9</code>).</p>
+  </div>
+
+  <div class="help-card">
+    <div class="help-card-head">
+      <span class="help-card-icon">&#9881;</span>
+      <h2>Pipeline</h2>
+    </div>
+    <p class="help-what">Build an <strong>HL7 v2.5</strong> message from a patient, then watch it flow through a hospital integration stack: routing &rarr; database &rarr; search index &rarr; dashboards &rarr; archive.</p>
+    <p class="help-concept"><span class="help-label">Concept</span> Interoperability — the HL7 messaging that keeps hospital systems in sync.</p>
+    <p class="help-try"><span class="help-try-icon">&#9656;</span> Try: pick <strong>PT-001</strong> + <strong>ORU^R01</strong>, hit <strong>Send</strong>, watch the six stages animate, then find the new row under Patients. <strong>Reset</strong> cleans it up.</p>
+  </div>
+
+</div>
+
+<div class="help-build">
+  <h2>How it's built</h2>
+  <ul>
+    <li><strong>Backend:</strong> Python + Flask, one blueprint per module, talking to PostgreSQL through parameterized queries (no raw string SQL).</li>
+    <li><strong>Frontend:</strong> a server-rendered shell + vanilla JavaScript, charts by Chart.js, in this "Clinical Light" theme.</li>
+    <li><strong>Pipeline realness:</strong> <em>build</em> and the <em>Postgres insert</em> are real; <em>Elasticsearch</em> is real when enabled; <em>NiFi</em>, <em>Kibana</em> and <em>MinIO</em> are simulated in-app (MinIO writes the raw HL7 to a local archive file).</li>
+  </ul>
+</div>
+
+<p class="help-about muted">Meditech Lab 2.0 &middot; Module 2, Medical Informatics (UE26MT324) &middot; PES University</p>
