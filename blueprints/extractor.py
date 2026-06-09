@@ -31,12 +31,7 @@ def extract_note():
     if err:
         return err
 
-    lines = [
-        {"text": line, "class": extract.classify_token(line)}
-        for line in text.split("\n")
-    ]
-
     return jsonify({
         "entities": extract.extract_entities(text),
-        "lines": lines,
+        "lines": extract.classify_lines(text),
     })

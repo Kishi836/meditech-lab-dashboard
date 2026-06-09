@@ -118,3 +118,23 @@ def test_extract_entities_no_match_returns_empty_list():
 @pytest.mark.parametrize("token,expected", CLASSIFIER_CASES)
 def test_classify_token(token, expected):
     assert extract.classify_token(token) == expected
+
+
+# ── classify_lines ───────────────────────────────────────────────────────────
+
+def test_classify_lines_one_entry_per_line_in_order():
+    text = "BP: 148/92 mmHg\nHbA1c: 8.9%\nPatient is doing well overall today friend"
+    lines = extract.classify_lines(text)
+    assert [l["text"] for l in lines] == text.split("\n")
+    assert [l["class"] for l in lines] == ["mixed", "structured", "unstructured"]
+
+
+def test_classify_lines_matches_classify_token_per_line():
+    lines = extract.classify_lines(NOTE)
+    for entry in lines:
+        assert entry["class"] == extract.classify_token(entry["text"])
+
+
+def test_classify_lines_trailing_newline_yields_empty_final_line():
+    lines = extract.classify_lines("HbA1c: 8.9%\n")
+    assert lines[-1] == {"text": "", "class": "unstructured"}

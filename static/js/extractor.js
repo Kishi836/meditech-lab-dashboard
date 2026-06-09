@@ -121,10 +121,12 @@
     });
   }
 
+  // Escapes &<> (via textContent) plus quotes, so the result is safe both
+  // as element text and inside a double-quoted attribute (e.g. title="…").
   function escapeHtml(value) {
     const div = document.createElement("div");
     div.textContent = String(value == null ? "" : value);
-    return div.innerHTML;
+    return div.innerHTML.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   }
 
   document.addEventListener("DOMContentLoaded", () => {

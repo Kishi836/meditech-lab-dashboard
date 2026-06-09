@@ -96,3 +96,16 @@ def classify_token(token: str) -> str:
         return "structured"
 
     return "unstructured"
+
+
+def classify_lines(text: str) -> list[dict]:
+    """Split `text` into lines and classify each one.
+
+    Returns ``[{"text": <line>, "class": <classification>}, ...]`` preserving
+    document order, one entry per ``\\n``-delimited line (a trailing newline
+    therefore yields a final empty line, classified as ``"unstructured"``).
+    """
+    return [
+        {"text": line, "class": classify_token(line)}
+        for line in text.split("\n")
+    ]
