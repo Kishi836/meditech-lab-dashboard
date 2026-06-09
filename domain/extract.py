@@ -23,9 +23,12 @@ _PATTERNS = [
     ("BP",            re.compile(r"BP[:\s]+(\d{2,3}/\d{2,3})\s*mmHg",   re.IGNORECASE)),
     ("HR",            re.compile(r"HR[:\s]+(\d{2,3})\s*bpm",            re.IGNORECASE)),
     ("Weight",        re.compile(r"Weight[:\s]+(\d{2,3})\s*kg",        re.IGNORECASE)),
-    ("Blood Glucose", re.compile(r"glucose[:\s]+(\d{3})\s*mg/dL",      re.IGNORECASE)),
+    ("Blood Glucose", re.compile(r"glucose[:\s]+(\d{2,4})\s*mg/dL",    re.IGNORECASE)),
     ("HbA1c",         re.compile(r"HbA1c[:\s]+([\d.]+%)",             re.IGNORECASE)),
-    ("ICD-10",        re.compile(r"\(([A-Z]\d{2}(?:\.\d{1,3})?)\)",   re.IGNORECASE)),
+    # ICD-10 codes are uppercase by definition — NOT IGNORECASE, or the
+    # uppercase [A-Z] would also match lowercase parentheticals (gene
+    # variants, footnote refs) and yield false positives.
+    ("ICD-10",        re.compile(r"\(([A-Z]\d{2}(?:\.\d{1,3})?)\)")),
     ("Creatinine",    re.compile(r"Creatinine[:\s]+([\d.]+)\s*mg/dL", re.IGNORECASE)),
     ("SpO2",          re.compile(r"SpO2[:\s]+(\d{2,3})\s*%",          re.IGNORECASE)),
     ("eGFR",          re.compile(r"eGFR[:\s]+(\d{2,3})",              re.IGNORECASE)),

@@ -76,70 +76,33 @@ def test_extract_entities_offsets_are_valid():
         assert ent["value"] in NOTE[ent["start"]:ent["end"]]
 
 
-def test_extract_entities_finds_hba1c():
+# Each required label and a substring that must appear in one of its values.
+ENTITY_CASES = [
+    ("BP", "148/92"),
+    ("HR", "88"),
+    ("Weight", "84"),
+    ("Blood Glucose", "182"),
+    ("HbA1c", "8.9"),
+    ("ICD-10", "E11.65"),
+    ("Creatinine", "1.1"),
+    ("SpO2", "98"),
+    ("eGFR", "68"),
+    ("Platelets", "215"),
+    ("Microalbumin", "42"),
+]
+
+
+@pytest.mark.parametrize("label,substr", ENTITY_CASES)
+def test_extract_entities_finds_label(label, substr):
     values = _labels_to_values(extract.extract_entities(NOTE))
-    assert "HbA1c" in values
-    assert any("8.9" in v for v in values["HbA1c"])
+    assert label in values
+    assert any(substr in v for v in values[label])
 
 
-def test_extract_entities_finds_spo2():
-    values = _labels_to_values(extract.extract_entities(NOTE))
-    assert "SpO2" in values
-    assert any("98" in v for v in values["SpO2"])
-
-
-def test_extract_entities_finds_egfr():
-    values = _labels_to_values(extract.extract_entities(NOTE))
-    assert "eGFR" in values
-    assert any("68" in v for v in values["eGFR"])
-
-
-def test_extract_entities_finds_platelets():
-    values = _labels_to_values(extract.extract_entities(NOTE))
-    assert "Platelets" in values
-    assert any("215" in v for v in values["Platelets"])
-
-
-def test_extract_entities_finds_icd10_code():
-    values = _labels_to_values(extract.extract_entities(NOTE))
-    assert "ICD-10" in values
-    assert any("E11.65" in v for v in values["ICD-10"])
-
-
-def test_extract_entities_finds_bp():
-    values = _labels_to_values(extract.extract_entities(NOTE))
-    assert "BP" in values
-    assert any("148/92" in v for v in values["BP"])
-
-
-def test_extract_entities_finds_hr():
-    values = _labels_to_values(extract.extract_entities(NOTE))
-    assert "HR" in values
-    assert any("88" in v for v in values["HR"])
-
-
-def test_extract_entities_finds_weight():
-    values = _labels_to_values(extract.extract_entities(NOTE))
-    assert "Weight" in values
-    assert any("84" in v for v in values["Weight"])
-
-
-def test_extract_entities_finds_blood_glucose():
-    values = _labels_to_values(extract.extract_entities(NOTE))
-    assert "Blood Glucose" in values
-    assert any("182" in v for v in values["Blood Glucose"])
-
-
-def test_extract_entities_finds_microalbumin():
-    values = _labels_to_values(extract.extract_entities(NOTE))
-    assert "Microalbumin" in values
-    assert any("42" in v for v in values["Microalbumin"])
-
-
-def test_extract_entities_finds_creatinine():
-    values = _labels_to_values(extract.extract_entities(NOTE))
-    assert "Creatinine" in values
-    assert any("1.1" in v for v in values["Creatinine"])
+def test_extract_entities_icd10_is_case_sensitive():
+    """Lowercase parentheticals must NOT be picked up as ICD-10 codes."""
+    values = _labels_to_values(extract.extract_entities("the variant (a12) was noted"))
+    assert "ICD-10" not in values
 
 
 def test_extract_entities_empty_string_returns_empty_list():
