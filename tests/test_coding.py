@@ -71,6 +71,30 @@ def test_icd10_search_no_match_returns_empty_list():
     assert coding.icd10_search("nonexistent-condition-xyz") == []
 
 
+# ── snomed_search ─────────────────────────────────────────────────────────
+
+def test_snomed_search_by_fsn_returns_diabetes_concepts():
+    results = coding.snomed_search("diabetes")
+    assert len(results) >= 1
+    assert any(r["id"] == 44054006 for r in results)
+
+
+def test_snomed_search_is_case_insensitive():
+    lower = coding.snomed_search("diabetes")
+    upper = coding.snomed_search("DIABETES")
+    assert lower == upper
+    assert len(lower) >= 1
+
+
+def test_snomed_search_by_id_substring():
+    results = coding.snomed_search("44054006")
+    assert any(r["id"] == 44054006 for r in results)
+
+
+def test_snomed_search_no_match_returns_empty_list():
+    assert coding.snomed_search("nonexistent-condition-xyz") == []
+
+
 # ── snomed_get ────────────────────────────────────────────────────────────
 
 def test_snomed_get_known_concept():

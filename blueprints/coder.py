@@ -35,13 +35,7 @@ def snomed_search():
     if err:
         return err
 
-    needle = q.strip().lower()
-    results = [
-        {"id": cid, "fsn": concept["fsn"]}
-        for cid, concept in coding.SNOMED.items()
-        if needle in concept["fsn"].lower() or needle in str(cid)
-    ]
-    return jsonify(results)
+    return jsonify(coding.snomed_search(q))
 
 
 @bp.route("/snomed/<int:concept_id>")

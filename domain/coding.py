@@ -171,6 +171,23 @@ def icd10_search(q: str) -> list[dict]:
 # SNOMED functions
 # ═══════════════════════════════════════════════════════════════════════════
 
+def snomed_search(q: str) -> list[dict]:
+    """Search SNOMED concepts whose FSN or numeric id contains `q`.
+
+    Matching is case-insensitive against the FSN, or a substring match
+    against `str(id)`. Returns a list of `{"id": <int>, "fsn": <str>}` dicts.
+    """
+    needle = q.strip().lower()
+    if not needle:
+        return []
+
+    results = []
+    for cid, concept in SNOMED.items():
+        if needle in concept["fsn"].lower() or needle in str(cid):
+            results.append({"id": cid, "fsn": concept["fsn"]})
+    return results
+
+
 def snomed_get(concept_id: int) -> dict | None:
     """Return the concept dict for `concept_id`, or None if unknown."""
     return SNOMED.get(concept_id)

@@ -89,7 +89,7 @@
       const li = document.createElement("li");
       li.className = "coder-result";
       li.innerHTML = `
-        <span class="coder-result-id">${concept.id}</span>
+        <span class="coder-result-id">${escapeHtml(concept.id)}</span>
         <span class="coder-result-fsn">${escapeHtml(concept.fsn)}</span>
       `;
       li.addEventListener("click", () => loadSnomedConcept(concept.id));
@@ -186,7 +186,7 @@
     row.style.paddingLeft = `${depth * 20}px`;
     row.innerHTML = `
       <span class="coder-tree-bullet">${kind === "current" ? "▸" : "·"}</span>
-      <span class="coder-tree-id">${id}</span>
+      <span class="coder-tree-id">${escapeHtml(id)}</span>
       <span class="coder-tree-fsn">${escapeHtml(fsn)}</span>
     `;
     if (kind !== "current") {
