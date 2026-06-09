@@ -1,0 +1,49 @@
+<h1>Patients</h1>
+<p class="muted">Search the patient registry and browse demographics, encounters, lab trends, and medications — read live from Postgres.</p>
+
+<div class="patients">
+
+  <div class="patients-list-pane">
+    <form class="patients-search-form" id="patients-search-form">
+      <input
+        type="text"
+        id="patients-search-input"
+        class="patients-search-input"
+        placeholder="Search by name, MRN, or condition (e.g. diab, Menon, I10)…"
+        autocomplete="off">
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <div class="patients-banner" id="patients-banner" hidden></div>
+
+    <ul class="patients-list" id="patients-list"></ul>
+  </div>
+
+  <div class="patients-detail" id="patients-detail">
+    <div class="patients-detail-empty muted" id="patients-detail-empty">
+      Select a patient to view their record here.
+    </div>
+
+    <div class="patients-record" id="patients-record" hidden>
+      <div class="patients-record-head">
+        <h2 class="patients-record-name" id="patients-record-name"></h2>
+        <span class="patients-record-id" id="patients-record-id"></span>
+      </div>
+
+      <div class="patients-tabs" id="patients-tabs">
+        <button class="patients-tab active" data-tab="overview">Overview</button>
+        <button class="patients-tab" data-tab="encounters">Encounters</button>
+        <button class="patients-tab" data-tab="labs">Labs</button>
+        <button class="patients-tab" data-tab="meds">Meds</button>
+      </div>
+
+      <div class="patients-tabpanels">
+        <div class="patients-tabpanel active" id="patients-tab-overview"></div>
+        <div class="patients-tabpanel" id="patients-tab-encounters"></div>
+        <div class="patients-tabpanel" id="patients-tab-labs"></div>
+        <div class="patients-tabpanel" id="patients-tab-meds"></div>
+      </div>
+    </div>
+  </div>
+
+</div>

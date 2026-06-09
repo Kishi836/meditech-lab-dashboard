@@ -40,8 +40,7 @@
 
     <main class="content">
       <section class="panel active" id="panel-patients">
-        <h1>Patients</h1>
-        <p class="muted">Patient records and search will live here.</p>
+        {% include "patients.html" %}
       </section>
 
       <section class="panel" id="panel-extractor">
@@ -59,7 +58,9 @@
     </main>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/patients.js') }}"></script>
   <script src="{{ url_for('static', filename='js/extractor.js') }}"></script>
   <script src="{{ url_for('static', filename='js/coder.js') }}"></script>
 </body>
