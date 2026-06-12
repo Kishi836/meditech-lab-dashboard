@@ -14,6 +14,10 @@
       <button type="submit" class="btn btn-primary">Search</button>
     </form>
 
+    <button type="button" class="btn btn-accent patients-add-btn" id="patients-add-btn">
+      + New patient <span class="muted">(via ADT^A04)</span>
+    </button>
+
     <div class="patients-banner" id="patients-banner" hidden></div>
 
     <ul class="patients-list" id="patients-list"></ul>
@@ -28,6 +32,14 @@
       <div class="patients-record-head">
         <h2 class="patients-record-name" id="patients-record-name"></h2>
         <span class="patients-record-id" id="patients-record-id"></span>
+        <span class="patients-record-actions">
+          <button type="button" class="btn btn-accent btn-small" id="patients-addresult-btn">
+            + Record result
+          </button>
+          <button type="button" class="btn btn-danger btn-small" id="patients-delete-btn" hidden>
+            Delete
+          </button>
+        </span>
       </div>
 
       <div class="patients-tabs" id="patients-tabs">

@@ -8,21 +8,25 @@
 
   const HEALTH_POLL_MS = 5000;
 
+  function activatePanel(target) {
+    document.querySelectorAll(".nav-item").forEach((n) => {
+      n.classList.toggle("active", n.getAttribute("data-panel") === target);
+    });
+    document.querySelectorAll(".panel").forEach((panel) => {
+      panel.classList.toggle("active", panel.id === `panel-${target}`);
+    });
+  }
+
   function initNav() {
-    const navItems = document.querySelectorAll(".nav-item");
-    navItems.forEach((item) => {
+    document.querySelectorAll(".nav-item").forEach((item) => {
       item.addEventListener("click", () => {
-        const target = item.getAttribute("data-panel");
-
-        navItems.forEach((n) => n.classList.remove("active"));
-        item.classList.add("active");
-
-        document.querySelectorAll(".panel").forEach((panel) => {
-          panel.classList.toggle("active", panel.id === `panel-${target}`);
-        });
+        activatePanel(item.getAttribute("data-panel"));
       });
     });
   }
+
+  // Programmatic navigation for cross-panel links (Patients ⇄ Intake).
+  window.AppNav = { go: activatePanel };
 
   function setDot(el, state) {
     // state: true -> ok, false -> down, "disabled" -> disabled/skipped

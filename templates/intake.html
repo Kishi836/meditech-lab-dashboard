@@ -1,0 +1,130 @@
+<h1>Intake</h1>
+<p class="muted">Front desk &amp; laboratory — new data enters the hospital the way it really does: each form emits a real <strong>HL7 document</strong> that travels the integration pipeline before landing in the EHR.</p>
+
+<div class="intake">
+
+  <div class="intake-switch" id="intake-switch">
+    <button class="intake-switch-btn active" data-form="register">
+      Register Patient <span class="intake-switch-doc">ADT^A04</span>
+    </button>
+    <button class="intake-switch-btn" data-form="result">
+      Record Result <span class="intake-switch-doc">ORU^R01</span>
+    </button>
+  </div>
+
+  <!-- ── Register Patient ── -->
+  <div class="intake-card" id="intake-card-register">
+    <div class="intake-grid">
+      <form class="intake-form" id="intake-register-form" novalidate>
+        <div class="intake-field">
+          <label for="intake-reg-name">Full name *</label>
+          <input type="text" id="intake-reg-name" name="full_name"
+                 placeholder="e.g. Asha Kumar" autocomplete="off">
+          <div class="intake-error" data-field="full_name"></div>
+        </div>
+        <div class="intake-row">
+          <div class="intake-field">
+            <label for="intake-reg-dob">Date of birth *</label>
+            <input type="date" id="intake-reg-dob" name="dob">
+            <div class="intake-error" data-field="dob"></div>
+          </div>
+          <div class="intake-field">
+            <label for="intake-reg-gender">Gender *</label>
+            <select id="intake-reg-gender" name="gender">
+              <option value="">—</option>
+              <option value="F">Female</option>
+              <option value="M">Male</option>
+            </select>
+            <div class="intake-error" data-field="gender"></div>
+          </div>
+          <div class="intake-field">
+            <label for="intake-reg-blood">Blood type</label>
+            <select id="intake-reg-blood" name="blood_type">
+              <option value="">—</option>
+              <option>A+</option><option>A-</option>
+              <option>B+</option><option>B-</option>
+              <option>AB+</option><option>AB-</option>
+              <option>O+</option><option>O-</option>
+            </select>
+            <div class="intake-error" data-field="blood_type"></div>
+          </div>
+        </div>
+        <div class="intake-row">
+          <div class="intake-field">
+            <label for="intake-reg-phone">Phone</label>
+            <input type="tel" id="intake-reg-phone" name="phone"
+                   placeholder="98xxxxxxxx" autocomplete="off">
+            <div class="intake-error" data-field="phone"></div>
+          </div>
+          <div class="intake-field">
+            <label for="intake-reg-city">City</label>
+            <input type="text" id="intake-reg-city" name="city"
+                   placeholder="Bangalore" autocomplete="off">
+            <div class="intake-error" data-field="city"></div>
+          </div>
+        </div>
+        <div class="intake-actions">
+          <button type="submit" class="btn btn-primary" id="intake-register-send">
+            Register &amp; send &#9656;
+          </button>
+          <span class="intake-status" id="intake-register-status"></span>
+        </div>
+      </form>
+
+      <div class="intake-preview">
+        <div class="intake-preview-title">ADT^A04 document <span class="muted">(live)</span></div>
+        <pre class="intake-preview-body" id="intake-register-preview">Start typing to draft the registration document…</pre>
+      </div>
+    </div>
+    <div class="intake-pipe" id="intake-register-pipe"></div>
+  </div>
+
+  <!-- ── Record Result ── -->
+  <div class="intake-card" id="intake-card-result" hidden>
+    <div class="intake-grid">
+      <form class="intake-form" id="intake-result-form" novalidate>
+        <div class="intake-field">
+          <label for="intake-res-patient">Patient *</label>
+          <select id="intake-res-patient" name="patient_id"></select>
+          <div class="intake-error" data-field="patient_id"></div>
+        </div>
+        <div class="intake-field">
+          <label for="intake-res-test">Test *</label>
+          <select id="intake-res-test" name="loinc_code"></select>
+          <div class="intake-hint muted" id="intake-res-ref"></div>
+          <div class="intake-error" data-field="loinc_code"></div>
+        </div>
+        <div class="intake-row">
+          <div class="intake-field">
+            <label for="intake-res-value">Value *</label>
+            <div class="intake-value-wrap">
+              <input type="number" step="any" id="intake-res-value" name="value"
+                     placeholder="—" autocomplete="off">
+              <span class="intake-unit" id="intake-res-unit"></span>
+            </div>
+            <div class="intake-error" data-field="value"></div>
+          </div>
+          <div class="intake-field">
+            <label for="intake-res-date">Date</label>
+            <input type="date" id="intake-res-date" name="obs_date">
+            <div class="intake-error" data-field="obs_date"></div>
+          </div>
+        </div>
+        <div class="intake-flagline" id="intake-res-flagline"></div>
+        <div class="intake-actions">
+          <button type="submit" class="btn btn-primary" id="intake-result-send">
+            Save result &amp; send &#9656;
+          </button>
+          <span class="intake-status" id="intake-result-status"></span>
+        </div>
+      </form>
+
+      <div class="intake-preview">
+        <div class="intake-preview-title">ORU^R01 document <span class="muted">(live)</span></div>
+        <pre class="intake-preview-body" id="intake-result-preview">Pick a patient and a test to draft the result document…</pre>
+      </div>
+    </div>
+    <div class="intake-pipe" id="intake-result-pipe"></div>
+  </div>
+
+</div>

@@ -208,6 +208,22 @@ body {
   color: #ffffff;
 }
 
+.btn-danger {
+  background: var(--surf2);
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.btn-danger:hover {
+  background: var(--red);
+  color: #ffffff;
+}
+
+.btn-small {
+  font-size: 12px;
+  padding: 5px 11px;
+}
+
 /* ───────────── Coder panel ───────────── */
 
 .coder {
@@ -1479,6 +1495,235 @@ body {
   }
 }
 
+/* ───────────── Intake panel ───────────── */
+
+.intake {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.intake-switch {
+  display: flex;
+  gap: 6px;
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px;
+  width: fit-content;
+}
+
+.intake-switch-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  color: var(--muted);
+  padding: 9px 16px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.intake-switch-btn:hover {
+  color: var(--text);
+}
+
+.intake-switch-btn.active {
+  background: var(--surf);
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+.intake-switch-doc {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--purple);
+  background: rgba(124, 58, 237, 0.1);
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+
+.intake-card {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.intake-grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 420px) 1fr;
+  gap: 22px;
+  align-items: start;
+}
+
+.intake-form {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.intake-row {
+  display: flex;
+  gap: 12px;
+}
+
+.intake-row .intake-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.intake-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.intake-field label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.intake-field input,
+.intake-field select {
+  font-family: inherit;
+  font-size: 13px;
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  padding: 9px 12px;
+  width: 100%;
+}
+
+.intake-field input:focus,
+.intake-field select:focus {
+  outline: none;
+  border-color: var(--blue);
+}
+
+.intake-value-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.intake-unit {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  min-width: 44px;
+}
+
+.intake-hint {
+  font-size: 11.5px;
+}
+
+.intake-error {
+  font-size: 11.5px;
+  color: var(--red);
+  min-height: 0;
+}
+
+.intake-error:not(:empty) {
+  padding-top: 1px;
+}
+
+.intake-flagline {
+  font-size: 12.5px;
+  min-height: 16px;
+}
+
+.intake-flagline-normal   { color: var(--green); }
+.intake-flagline-abnormal { color: var(--yellow); }
+
+.intake-flagline-critical {
+  color: var(--red);
+  font-weight: 600;
+}
+
+.intake-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 2px;
+}
+
+.intake-status {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.intake-status-ok    { color: var(--green); }
+.intake-status-error { color: var(--red); }
+
+.intake-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.intake-preview-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.intake-preview-body {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 150px;
+}
+
+.intake-pipe {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+@media (max-width: 980px) {
+  .intake-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Patients panel: intake cross-links ── */
+
+.patients-add-btn {
+  width: 100%;
+}
+
+.patients-record-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
 /* ───────────── Clinical Light — card elevation ─────────────
    Top-level module panels sit as white cards on the grey page. A soft
    shadow gives them the lift that the old flat dark theme didn't need. */
@@ -1489,6 +1734,7 @@ body {
 .extractor-section,
 .patients-list-pane,
 .patients-detail,
+.intake-card,
 .pipeline-controls,
 .pipeline-preview,
 .pipeline-stages,

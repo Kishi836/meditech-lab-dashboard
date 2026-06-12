@@ -16,6 +16,10 @@
     normal: "#0f8a5f", // --green
   };
 
+  // Seed patients ship with the lab and are protected from deletion
+  // (mirrors the backend guard in blueprints/intake.py).
+  const SEED_RE = /^PT-00[1-8]$/;
+
   let selectedId = null;
   let activeTab = "overview";
   const charts = []; // live Chart instances, destroyed before each re-render
@@ -143,6 +147,7 @@
     el("patients-record-name").textContent = demo.full_name || "";
     el("patients-record-id").textContent =
       `${demo.patient_id || ""} · ${demo.mrn || ""}`;
+    el("patients-delete-btn").hidden = SEED_RE.test(demo.patient_id || "");
 
     renderOverview(demo);
     renderEncounters(data.encounters || []);
@@ -400,9 +405,59 @@
     });
   }
 
+  // ───────────── intake cross-links + delete ─────────────
+
+  function initActions() {
+    el("patients-add-btn").addEventListener("click", () => {
+      if (window.AppNav) window.AppNav.go("intake");
+      if (window.IntakePanel) window.IntakePanel.openRegister();
+    });
+
+    el("patients-addresult-btn").addEventListener("click", () => {
+      if (window.AppNav) window.AppNav.go("intake");
+      if (window.IntakePanel) window.IntakePanel.openResult(selectedId);
+    });
+
+    el("patients-delete-btn").addEventListener("click", () => {
+      if (!selectedId || SEED_RE.test(selectedId)) return;
+      const name = el("patients-record-name").textContent || selectedId;
+      if (!window.confirm(`Delete ${name} (${selectedId}) and every dependent record? This cannot be undone.`)) {
+        return;
+      }
+      fetch(`/api/patients/${encodeURIComponent(selectedId)}`, { method: "DELETE" })
+        .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
+        .then(({ ok, data }) => {
+          if (!ok) throw new Error(data.error || "delete failed");
+          if (window.showToast) window.showToast(`Deleted ${name}`, "ok");
+          selectedId = null;
+          el("patients-record").hidden = true;
+          const empty = el("patients-detail-empty");
+          empty.hidden = false;
+          empty.textContent = "Select a patient to view their record here.";
+          loadList(el("patients-search-input").value.trim());
+        })
+        .catch((err) => showBanner(`Couldn't delete: ${err.message}`));
+    });
+  }
+
+  // Hooks for the Intake panel: refresh the registry after a registration /
+  // result lands, or open a specific patient.
+  window.PatientsPanel = {
+    refresh() {
+      loadList(el("patients-search-input").value.trim());
+      if (selectedId) loadPatient(selectedId);
+    },
+    open(id) {
+      if (window.AppNav) window.AppNav.go("patients");
+      loadPatient(id);
+      loadList("");
+    },
+  };
+
   document.addEventListener("DOMContentLoaded", () => {
     initTabs();
     initSearch();
+    initActions();
     loadList("");
   });
 })();
