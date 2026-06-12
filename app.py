@@ -15,6 +15,7 @@ import db
 import es
 from config import Config
 from blueprints.patients import bp as patients_bp
+from blueprints.intake import bp as intake_bp
 from blueprints.extractor import bp as extractor_bp
 from blueprints.coder import bp as coder_bp
 from blueprints.pipeline import bp as pipeline_bp
@@ -25,6 +26,7 @@ def create_app():
     app.config.from_object(Config)
 
     app.register_blueprint(patients_bp)
+    app.register_blueprint(intake_bp)
     app.register_blueprint(extractor_bp)
     app.register_blueprint(coder_bp)
     app.register_blueprint(pipeline_bp)
