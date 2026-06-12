@@ -1,8 +1,8 @@
 /* Meditech Lab 2.0 — Pipeline panel behaviour
    - Compose: pick a patient + HL7 message type → live preview (POST
      /api/hl7/preview). Send (POST /api/hl7/send) runs the six-stage hybrid
-     pipeline and the diagram animates each stage in sequence using the
-     returned stages[] (green=ok, grey=skipped, red=error) with ms + detail.
+     pipeline; the PipeSVG diagram (pipesvg.js) animates a document packet
+     through the returned stages[] (green=ok, grey=skipped, red=error).
    - Live feed (GET /api/pipeline/feed) and Chart.js analytics (diagnoses by
      dept, messages sent, critical values) refresh after every send/reset and
      whenever the Pipeline tab is opened.
@@ -13,20 +13,9 @@
 (function () {
   "use strict";
 
-  // Stage metadata — order matches the backend pipeline.
-  const STAGES = [
-    { key: "build",         label: "Build",         sub: "HL7 v2.5", kind: "real" },
-    { key: "nifi_route",    label: "NiFi",          sub: "route",    kind: "sim" },
-    { key: "postgres",      label: "Postgres",      sub: "insert",   kind: "real" },
-    { key: "elasticsearch", label: "Elasticsearch", sub: "index",    kind: "real" },
-    { key: "kibana",        label: "Kibana",        sub: "charts",   kind: "sim" },
-    { key: "minio",         label: "MinIO",         sub: "archive",  kind: "sim" },
-  ];
-
-  const STAGE_STEP_MS = 240; // stagger between stages lighting up
-
   const charts = {};         // {dept, msgs} live Chart instances
   let patientsLoaded = false;
+  let pipe = null;           // PipeSVG instance (the animated stage diagram)
 
   function el(id) {
     return document.getElementById(id);
@@ -98,65 +87,13 @@
       });
   }
 
-  // ───────────── stage diagram ─────────────
-
-  function renderStages() {
-    const host = el("pipeline-stages");
-    host.innerHTML = "";
-    STAGES.forEach((s, idx) => {
-      if (idx > 0) {
-        const arrow = document.createElement("div");
-        arrow.className = "pipeline-arrow";
-        arrow.innerHTML = "&#8594;";
-        host.appendChild(arrow);
-      }
-      const card = document.createElement("div");
-      card.className = "pipeline-stage";
-      card.id = `pipeline-stage-${s.key}`;
-      card.innerHTML = `
-        <div class="pipeline-stage-kind pipeline-stage-kind-${s.kind}">${s.kind === "real" ? "real" : "sim"}</div>
-        <div class="pipeline-stage-name">${escapeHtml(s.label)}</div>
-        <div class="pipeline-stage-sub muted">${escapeHtml(s.sub)}</div>
-        <div class="pipeline-stage-detail" id="pipeline-stage-detail-${s.key}"></div>`;
-      host.appendChild(card);
-    });
-  }
-
-  function resetStages() {
-    STAGES.forEach((s) => {
-      const card = el(`pipeline-stage-${s.key}`);
-      if (card) card.className = "pipeline-stage";
-      const detail = el(`pipeline-stage-detail-${s.key}`);
-      if (detail) detail.textContent = "";
-    });
-  }
-
-  function paintStage(stage) {
-    const card = el(`pipeline-stage-${stage.stage}`);
-    if (card) card.className = `pipeline-stage pipeline-stage-${stage.status}`;
-    const detail = el(`pipeline-stage-detail-${stage.stage}`);
-    if (detail) detail.textContent = `${stage.detail} · ${stage.ms}ms`;
-  }
-
-  function animateStages(stages) {
-    return new Promise((resolve) => {
-      stages.forEach((stage, i) => {
-        setTimeout(() => {
-          paintStage(stage);
-          if (i === stages.length - 1) resolve();
-        }, i * STAGE_STEP_MS);
-      });
-      if (!stages.length) resolve();
-    });
-  }
-
   // ───────────── send / reset ─────────────
 
   function send() {
     const btn = el("pipeline-send");
     btn.disabled = true;
     setStatus("Sending…", "");
-    resetStages();
+    pipe.reset();
 
     fetch("/api/hl7/send", {
       method: "POST",
@@ -169,7 +106,7 @@
         el("pipeline-preview").textContent = data.hl7
           ? data.hl7.split("\r").join("\n")
           : "";
-        return animateStages(data.stages).then(() => {
+        return pipe.play(data.stages).then(() => {
           const errored = data.stages.some((s) => s.status === "error");
           setStatus(
             errored
@@ -193,7 +130,7 @@
     fetch("/api/pipeline/reset")
       .then((res) => res.json())
       .then((data) => {
-        resetStages();
+        pipe.reset();
         setStatus(
           `Reset — removed pipeline rows + ${data.archive_files_removed} archive file(s).`,
           "ok"
@@ -355,7 +292,7 @@
   }
 
   function init() {
-    renderStages();
+    pipe = PipeSVG.mount(el("pipeline-stages"));
 
     el("pipeline-patient").addEventListener("change", updatePreview);
     el("pipeline-msgtype").addEventListener("change", updatePreview);
