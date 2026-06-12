@@ -33,6 +33,7 @@ from flask import Blueprint, jsonify, request
 import db
 import es
 from config import Config
+from domain.catalog import TESTS, is_critical
 from domain.hl7 import build_hl7, parse_destination
 
 bp = Blueprint("pipeline", __name__, url_prefix="/api")
@@ -45,18 +46,6 @@ TAG = "ENC-HL7-"
 # Recent sends, newest first — powers /api/pipeline/feed and message_counts.
 # In-memory by design (a lab convenience); reset clears it too.
 FEED = deque(maxlen=25)
-
-# Latest-value danger thresholds for the critical-values panel. Stronger than
-# the patients module's "abnormal" ranges — these are "call the doctor" levels.
-#   loinc -> (direction, threshold, label)
-CRITICAL = {
-    "4548-4":  ("high", 8.0,  "HbA1c"),
-    "10839-9": ("high", 0.04, "Troponin I"),
-    "2708-6":  ("low",  92,   "SpO2"),
-    "2160-0":  ("high", 2.0,  "Creatinine"),
-    "8806-2":  ("low",  45,   "Echo EF"),
-    "8480-6":  ("high", 140,  "Systolic BP"),
-}
 
 
 class _Skip(Exception):
@@ -355,23 +344,19 @@ def critical_values():
 
     alerts = []
     for r in rows:
-        rule = CRITICAL.get(r["loinc_code"])
-        if rule is None or r["value"] is None:
+        value = float(r["value"]) if r["value"] is not None else None
+        if not is_critical(r["loinc_code"], value):
             continue
-        direction, threshold, label = rule
-        value = float(r["value"])
-        breached = value > threshold if direction == "high" else value < threshold
-        if not breached:
-            continue
+        entry = TESTS[r["loinc_code"]]
         alerts.append({
             "patient_id": r["patient_id"],
             "full_name": r["full_name"],
-            "display_name": r["display_name"] or label,
+            "display_name": r["display_name"] or entry["display_name"],
             "value": value,
             "unit": r["unit"],
             "obs_date": r["obs_date"].isoformat() if r["obs_date"] else None,
-            "direction": direction,
-            "threshold": threshold,
+            "direction": entry["critical_dir"],
+            "threshold": entry["critical_at"],
         })
     alerts.sort(key=lambda a: a["full_name"])
     return jsonify(alerts)

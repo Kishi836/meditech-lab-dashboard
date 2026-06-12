@@ -108,6 +108,43 @@ def test_adt_a03_uses_outpatient_class(patient):
     assert pv1.split("|")[2] == "O"
 
 
+# ── ADT_A04 (registration) ───────────────────────────────────────────────────
+
+def test_adt_a04_segment_order(patient):
+    msg = hl7.build_hl7(patient, "ADT_A04")
+    assert seg_names(msg) == ["MSH", "EVN", "PID", "PV1"]
+
+
+def test_adt_a04_msh_type(patient):
+    msg = hl7.build_hl7(patient, "ADT_A04")
+    assert "ADT^A04^ADT_A04" in msg.split("\r")[0]
+
+
+def test_adt_a04_pid_carries_full_demographics(patient):
+    patient["phone"] = "9845012345"
+    msg = hl7.build_hl7(patient, "ADT_A04")
+    pid = [s for s in msg.split("\r") if s.startswith("PID")][0]
+    assert "PT-001" in pid
+    assert "Menon^Rajan" in pid
+    assert "19700412" in pid
+    assert "Bangalore" in pid
+    assert "9845012345" in pid
+
+
+def test_adt_a04_uses_outpatient_class(patient):
+    msg = hl7.build_hl7(patient, "ADT_A04")
+    pv1 = [s for s in msg.split("\r") if s.startswith("PV1")][0]
+    assert pv1.split("|")[2] == "O"
+
+
+def test_adt_a04_tolerant_of_minimal_patient():
+    minimal = {"patient_id": "PT-009", "name": "Asha Kumar",
+               "dob": "19951230", "gender": "F"}
+    msg = hl7.build_hl7(minimal, "ADT_A04")
+    assert seg_names(msg) == ["MSH", "EVN", "PID", "PV1"]
+    assert "PT-009" in msg
+
+
 # ── ORM_O01 ──────────────────────────────────────────────────────────────────
 
 def test_orm_one_rxo_per_medication(patient):
@@ -127,6 +164,7 @@ def test_orm_segment_order(patient):
     ("ORU_R01", "observations"),
     ("ADT_A01", "encounters"),
     ("ADT_A03", "encounters"),
+    ("ADT_A04", "patients"),
     ("ORM_O01", "medications"),
 ])
 def test_parse_destination(msg_type, table):

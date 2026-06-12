@@ -19,43 +19,9 @@ observation `value`s are cast to float() and trend dates to isoformat().
 from flask import Blueprint, jsonify, request
 
 import db
+from domain.catalog import flag as _flag
 
 bp = Blueprint("patients", __name__, url_prefix="/api")
-
-
-# Per-test reference ranges, keyed by LOINC code, used to flag each
-# observation high/low/normal. Adult, sensible-but-not-clinically-
-# authoritative values. `low`/`high` are inclusive bounds; None means
-# that side is unbounded.
-#   (low, high) -> value < low => "low", value > high => "high", else "normal"
-REFERENCE_RANGES = {
-    "4548-4":  (None, 5.7),   # HbA1c %
-    "2345-7":  (70, 99),      # Blood Glucose mg/dL (fasting)
-    "8480-6":  (90, 120),     # Systolic BP mmHg
-    "33914-3": (90, None),    # eGFR mL/min  (>=90 normal, <90 low)
-    "2160-0":  (0.6, 1.3),    # Creatinine mg/dL
-    "8806-2":  (55, 70),      # Echo Ejection Fraction %
-    "2708-6":  (95, None),    # SpO2 %  (>=95 normal, <95 low)
-    "8310-5":  (36.1, 37.2),  # Body Temp C
-    "10839-9": (None, 0.04),  # Troponin I ng/mL
-}
-
-
-def _flag(loinc_code, value):
-    """Classify a numeric value against its reference range.
-
-    Returns "high", "low", or "normal". Tests with no known range (or a
-    null value) are reported as "normal" so the UI always has a flag.
-    """
-    rng = REFERENCE_RANGES.get(loinc_code)
-    if rng is None or value is None:
-        return "normal"
-    low, high = rng
-    if low is not None and value < low:
-        return "low"
-    if high is not None and value > high:
-        return "high"
-    return "normal"
 
 
 def _not_found(patient_id):

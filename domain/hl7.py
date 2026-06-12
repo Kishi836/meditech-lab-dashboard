@@ -59,6 +59,7 @@ ENCODING_CHARS = r"^~\&"
 _SENDING_APP = {
     "ADT_A01": "HIS",
     "ADT_A03": "HIS",
+    "ADT_A04": "HIS",
     "ORU_R01": "LIS",
     "ORM_O01": "CPOE",
 }
@@ -67,6 +68,7 @@ _SENDING_APP = {
 _DESTINATIONS = {
     "ADT_A01": "encounters",
     "ADT_A03": "encounters",
+    "ADT_A04": "patients",
     "ORU_R01": "observations",
     "ORM_O01": "medications",
 }
@@ -130,9 +132,9 @@ def build_hl7(patient: dict, msg_type: str, *,
               msg_id: str | None = None) -> str:
     """Build an HL7 v2.5 message for `msg_type`.
 
-    `msg_type` must be one of ``{"ADT_A01", "ADT_A03", "ORU_R01",
-    "ORM_O01"}``; anything else raises ``ValueError``. Segments are joined
-    by the carriage return ``\\r``.
+    `msg_type` must be one of ``{"ADT_A01", "ADT_A03", "ADT_A04",
+    "ORU_R01", "ORM_O01"}``; anything else raises ``ValueError``. Segments
+    are joined by the carriage return ``\\r``.
     """
     if msg_type not in _SENDING_APP:
         raise ValueError(f"Unknown HL7 msg_type: {msg_type!r}")
@@ -146,6 +148,18 @@ def build_hl7(patient: dict, msg_type: str, *,
     gender = patient.get("gender", "")
     pid_id = _pid(patient)
     app = _SENDING_APP[msg_type]
+
+    if msg_type == "ADT_A04":
+        # Registration: full demographics in the PID (address PID-11, phone
+        # PID-13), outpatient class — there is no admission yet.
+        city = patient.get("city", "")
+        phone = patient.get("phone", "")
+        return SEP.join([
+            _msh("ADT", "A04", msg_type, app, ts, mid),
+            f"EVN||{ts}",
+            f"PID|1||{pid_id}||{name}||{dob}|{gender}|||{city}||{phone}",
+            "PV1|1|O|Registration",
+        ])
 
     if msg_type in ("ADT_A01", "ADT_A03"):
         trigger = "A01" if msg_type == "ADT_A01" else "A03"
@@ -218,9 +232,9 @@ def build_hl7(patient: dict, msg_type: str, *,
 def parse_destination(msg_type: str) -> str:
     """Return the Postgres table an `msg_type` routes to.
 
-    ADT_A01/ADT_A03 → "encounters", ORU_R01 → "observations",
-    ORM_O01 → "medications". Unknown types raise ``ValueError``
-    (consistent with ``build_hl7``).
+    ADT_A01/ADT_A03 → "encounters", ADT_A04 → "patients",
+    ORU_R01 → "observations", ORM_O01 → "medications". Unknown types
+    raise ``ValueError`` (consistent with ``build_hl7``).
     """
     try:
         return _DESTINATIONS[msg_type]
