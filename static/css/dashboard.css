@@ -62,6 +62,43 @@ body {
   font-weight: 400;
 }
 
+/* animated ECG trace under the brand */
+
+.brand-ecg {
+  width: 100%;
+  height: 26px;
+  margin: -10px 0 12px;
+  fill: none;
+  stroke: #5fd3a8;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.9;
+}
+
+.brand-ecg polyline {
+  stroke-dasharray: 70 330;
+  animation: ecg-run 3.2s linear infinite;
+}
+
+@keyframes ecg-run {
+  from { stroke-dashoffset: 400; }
+  to   { stroke-dashoffset: 0; }
+}
+
+/* shared inline SVG icon (sprite in _icons.html) */
+
+.icon {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  display: block;
+}
+
 .nav {
   display: flex;
   flex-direction: column;
@@ -96,9 +133,10 @@ body {
 }
 
 .nav-icon {
-  font-size: 15px;
   width: 18px;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 /* ───────────── Status strip ───────────── */
@@ -147,6 +185,14 @@ body {
   box-shadow: none;
 }
 
+.dot.down {
+  animation: dot-blink 1.2s ease-in-out infinite;
+}
+
+@keyframes dot-blink {
+  50% { opacity: 0.4; }
+}
+
 /* ───────────── Content area ───────────── */
 
 .content {
@@ -161,6 +207,12 @@ body {
 
 .panel.active {
   display: block;
+  animation: panel-in 0.28s ease both;
+}
+
+@keyframes panel-in {
+  from { opacity: 0; transform: translateY(7px); }
+  to   { opacity: 1; transform: none; }
 }
 
 .panel h1 {
@@ -746,20 +798,50 @@ body {
 
 .patients-list-item {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
+  align-items: center;
+  gap: 11px;
   background: var(--surf2);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 10px 12px;
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
+  transition: border-color 0.15s, background 0.15s,
+              transform 0.15s, box-shadow 0.15s;
 }
 
 .patients-list-item:hover {
   border-color: var(--blue);
   background: var(--surf);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
 }
+
+.patients-list-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+
+/* initials avatar, tone hashed from the patient id */
+
+.patients-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.patients-avatar-blue   { color: var(--blue);   background: rgba(37, 99, 235, 0.12); }
+.patients-avatar-green  { color: var(--green);  background: rgba(15, 138, 95, 0.12); }
+.patients-avatar-purple { color: var(--purple); background: rgba(124, 58, 237, 0.12); }
+.patients-avatar-amber  { color: var(--yellow); background: rgba(183, 121, 31, 0.14); }
 
 .patients-list-item.active {
   border-color: var(--blue);
@@ -841,6 +923,22 @@ body {
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 3px 8px;
+}
+
+.patients-record-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.patients-chip {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 9px;
 }
 
 .patients-tabs {
@@ -1900,4 +1998,126 @@ body {
 .help-about {
   margin-top: 22px;
   text-align: center;
+}
+
+.help-card {
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+
+.help-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(20, 40, 80, 0.1);
+}
+
+.help-card-icon .icon {
+  width: 19px;
+  height: 19px;
+  color: var(--blue);
+}
+
+/* ───────────── Toasts ───────────── */
+
+.toast-host {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 1000;
+}
+
+.toast {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surf);
+  border: 1px solid var(--blue);
+  border-left-width: 4px;
+  border-radius: 8px;
+  padding: 11px 16px;
+  max-width: 360px;
+  box-shadow: 0 4px 14px rgba(20, 40, 80, 0.16);
+  animation: toast-in 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+.toast-ok    { border-color: var(--green); }
+.toast-error { border-color: var(--red); }
+
+.toast-out {
+  transition: opacity 0.35s, transform 0.35s;
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ───────────── Skeleton shimmer (loading placeholders) ───────────── */
+
+.skeleton {
+  background: linear-gradient(90deg, var(--surf2) 25%, #e3e9f1 38%, var(--surf2) 55%);
+  background-size: 400% 100%;
+  animation: skeleton-shimmer 1.2s ease-in-out infinite;
+  border-radius: 4px;
+}
+
+.skeleton-line {
+  height: 9px;
+  margin: 4px 0;
+}
+
+.patients-list-skeleton {
+  pointer-events: none;
+}
+
+@keyframes skeleton-shimmer {
+  from { background-position: 100% 0; }
+  to   { background-position: 0 0; }
+}
+
+/* ───────────── Micro-interactions ───────────── */
+
+.coder-result,
+.pipeline-feed-item {
+  transition: border-color 0.15s, background 0.15s,
+              transform 0.15s, box-shadow 0.15s;
+}
+
+.coder-result:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:focus-visible,
+.nav-item:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 1px;
+}
+
+/* ───────────── Reduced motion ───────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .panel.active,
+  .toast,
+  .brand-ecg polyline,
+  .dot.down,
+  .skeleton {
+    animation: none;
+  }
+
+  .patients-list-item:hover,
+  .coder-result:hover,
+  .help-card:hover,
+  .btn:active {
+    transform: none;
+  }
 }

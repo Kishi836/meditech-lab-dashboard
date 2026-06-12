@@ -1,12 +1,38 @@
 /* Meditech Lab 2.0 — dashboard shell behaviour
    - Switches the visible content panel when a sidebar nav item is clicked.
    - Polls /api/health every few seconds and reflects the result in the
-     two status dots (Postgres, Elasticsearch). */
+     two status dots (Postgres, Elasticsearch).
+   - window.showToast(message, kind): transient notifications, used by the
+     Intake and Pipeline modules ("ok" green, "error" red, default blue). */
 
 (function () {
   "use strict";
 
   const HEALTH_POLL_MS = 5000;
+  const TOAST_MS = 4200;
+
+  // ───────────── toasts ─────────────
+
+  function showToast(message, kind) {
+    let host = document.getElementById("toast-host");
+    if (!host) {
+      host = document.createElement("div");
+      host.id = "toast-host";
+      host.className = "toast-host";
+      document.body.appendChild(host);
+    }
+    const toast = document.createElement("div");
+    toast.className = "toast" + (kind ? ` toast-${kind}` : "");
+    toast.setAttribute("role", "status");
+    toast.textContent = message;
+    host.appendChild(toast);
+    setTimeout(() => {
+      toast.classList.add("toast-out");
+      setTimeout(() => toast.remove(), 400);
+    }, TOAST_MS);
+  }
+
+  window.showToast = showToast;
 
   function activatePanel(target) {
     document.querySelectorAll(".nav-item").forEach((n) => {

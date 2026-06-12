@@ -114,6 +114,12 @@
               : `Sent ${data.msg_id} — row written, archived ✓`,
             errored ? "error" : "ok"
           );
+          if (window.showToast) {
+            window.showToast(
+              errored ? `Message ${data.msg_id} hit a stage error` : `Message ${data.msg_id} delivered`,
+              errored ? "error" : "ok"
+            );
+          }
           refresh();
         });
       })
@@ -135,6 +141,7 @@
           `Reset — removed pipeline rows + ${data.archive_files_removed} archive file(s).`,
           "ok"
         );
+        if (window.showToast) window.showToast("Demo pipeline data cleaned up", "ok");
         refresh();
         updatePreview();
       })

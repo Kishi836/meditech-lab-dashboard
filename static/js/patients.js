@@ -50,11 +50,29 @@
     el("patients-banner").hidden = true;
   }
 
+  function renderSkeleton() {
+    const list = el("patients-list");
+    list.innerHTML = Array.from({ length: 5 })
+      .map(
+        () => `
+        <li class="patients-list-item patients-list-skeleton" aria-hidden="true">
+          <span class="patients-avatar skeleton"></span>
+          <div class="patients-list-body">
+            <div class="skeleton skeleton-line" style="width:55%"></div>
+            <div class="skeleton skeleton-line" style="width:35%"></div>
+            <div class="skeleton skeleton-line" style="width:75%"></div>
+          </div>
+        </li>`
+      )
+      .join("");
+  }
+
   function loadList(q) {
     const url = q
       ? `/api/patients?q=${encodeURIComponent(q)}`
       : "/api/patients";
 
+    renderSkeleton();
     fetch(url)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -92,16 +110,36 @@
       li.setAttribute("data-patient-id", p.patient_id);
       if (p.patient_id === selectedId) li.classList.add("active");
       li.innerHTML = `
-        <div class="patients-list-top">
-          <span class="patients-list-name">${escapeHtml(p.full_name)}</span>
-          <span class="patients-list-meta">${escapeHtml(p.gender)} · ${escapeHtml(p.age)}y</span>
+        <span class="patients-avatar patients-avatar-${avatarTone(p.patient_id)}">${escapeHtml(initials(p.full_name))}</span>
+        <div class="patients-list-body">
+          <div class="patients-list-top">
+            <span class="patients-list-name">${escapeHtml(p.full_name)}</span>
+            <span class="patients-list-meta">${escapeHtml(p.gender)} · ${escapeHtml(p.age)}y</span>
+          </div>
+          <div class="patients-list-mrn">${escapeHtml(p.mrn)}</div>
+          <div class="patients-list-summary muted">${escapeHtml(p.summary)}</div>
         </div>
-        <div class="patients-list-mrn">${escapeHtml(p.mrn)}</div>
-        <div class="patients-list-summary muted">${escapeHtml(p.summary)}</div>
       `;
       li.addEventListener("click", () => loadPatient(p.patient_id));
       list.appendChild(li);
     });
+  }
+
+  function initials(name) {
+    return String(name || "?")
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((w) => w[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase();
+  }
+
+  // Stable per-patient accent for the avatar (4 clinical tones).
+  function avatarTone(id) {
+    let hash = 0;
+    for (const ch of String(id)) hash = (hash * 31 + ch.charCodeAt(0)) % 997;
+    return ["blue", "green", "purple", "amber"][hash % 4];
   }
 
   // ───────────── patient detail ─────────────
@@ -148,6 +186,16 @@
     el("patients-record-id").textContent =
       `${demo.patient_id || ""} · ${demo.mrn || ""}`;
     el("patients-delete-btn").hidden = SEED_RE.test(demo.patient_id || "");
+
+    el("patients-record-chips").innerHTML = [
+      demo.age != null ? `${demo.age}y` : null,
+      demo.gender === "M" ? "Male" : demo.gender === "F" ? "Female" : null,
+      demo.blood_type,
+      demo.city,
+    ]
+      .filter(Boolean)
+      .map((c) => `<span class="patients-chip">${escapeHtml(c)}</span>`)
+      .join("");
 
     renderOverview(demo);
     renderEncounters(data.encounters || []);
