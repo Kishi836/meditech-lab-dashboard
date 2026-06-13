@@ -71,6 +71,31 @@ def test_icd10_search_no_match_returns_empty_list():
     assert coding.icd10_search("nonexistent-condition-xyz") == []
 
 
+import pytest
+
+
+@pytest.mark.parametrize("term, expected_code", [
+    ("hypertension", "I10"),
+    ("asthma", "J45.909"),
+    ("fracture", "S72.001A"),
+    ("copd", "J44.9"),
+    ("depress", "F32.9"),
+    ("anxiety", "F41.1"),
+    ("pneumonia", "J18.9"),
+    ("migraine", "G43.909"),
+    ("osteoporosis", "M81.0"),
+    ("sepsis", "A41.9"),
+    ("urinary tract", "N39.0"),
+    ("breast", "C50.919"),
+])
+def test_icd10_search_covers_common_conditions(term, expected_code):
+    # The expanded code set must return hits for arbitrary common terms,
+    # not just "diabetes" (plan.md §8 item 1).
+    results = coding.icd10_search(term)
+    assert any(r["code"] == expected_code for r in results), \
+        f"expected {expected_code} in results for '{term}'"
+
+
 # ── snomed_search ─────────────────────────────────────────────────────────
 
 def test_snomed_search_by_fsn_returns_diabetes_concepts():
@@ -153,3 +178,54 @@ def test_snomed_to_icd10_recurses_into_children():
 
 def test_snomed_to_icd10_unknown_concept_returns_none():
     assert coding.snomed_to_icd10(999999999) is None
+
+
+@pytest.mark.parametrize("concept_id, expected_icd10", [
+    (195967001, "J45.909"),  # Asthma
+    (38341003,  "I10"),      # Hypertensive disorder
+    (13645005,  "J44.9"),    # COPD
+    (35489007,  "F32.9"),    # Depressive disorder
+    (69896004,  "M06.9"),    # Rheumatoid arthritis
+    (840539006, "U07.1"),    # COVID-19
+])
+def test_snomed_to_icd10_expanded_concepts(concept_id, expected_icd10):
+    assert coding.snomed_to_icd10(concept_id) == expected_icd10
+
+
+@pytest.mark.parametrize("term, expected_id", [
+    ("asthma", 195967001),
+    ("hypertensive", 38341003),
+    ("rheumatoid", 69896004),
+    ("schizophrenia", 58214004),
+])
+def test_snomed_search_covers_expanded_concepts(term, expected_id):
+    results = coding.snomed_search(term)
+    assert any(r["id"] == expected_id for r in results)
+
+
+# ── hierarchy integrity (catches dangling child / orphan references) ────────
+
+def test_every_snomed_child_reference_resolves():
+    for cid, concept in coding.SNOMED.items():
+        for child in concept.get("children", []):
+            assert child in coding.SNOMED, f"{cid} references missing child {child}"
+
+
+def test_every_snomed_concept_reaches_root():
+    for cid in coding.SNOMED:
+        if cid == coding.SNOMED_ROOT:
+            continue
+        assert coding.snomed_ancestors(cid)[-1] == coding.SNOMED_ROOT, \
+            f"{cid} does not chain up to the root"
+
+
+def test_every_snomed_icd10_map_exists_in_icd10_table():
+    for cid, concept in coding.SNOMED.items():
+        mapped = concept.get("attributes", {}).get("icd10_map")
+        if not mapped:
+            continue
+        # Compound maps (e.g. "N08 + E11.22") split on " + "; each part
+        # must resolve in the ICD-10 table.
+        for code in mapped.split(" + "):
+            assert coding.icd10_lookup(code)["found"], \
+                f"{cid} maps to unknown ICD-10 code {code!r}"
