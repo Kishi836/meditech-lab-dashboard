@@ -1,6 +1,12 @@
 <h1>Pipeline</h1>
 <p class="muted">Build an HL7 v2.5 message from a real patient record and watch it flow through the hybrid pipeline — <strong>real</strong> Postgres + archive, <strong>simulated</strong> NiFi / Kibana / MinIO.</p>
 
+<div class="panel-banner panel-banner-sandbox">
+  <svg class="icon panel-banner-icon"><use href="#icon-pipeline"/></svg>
+  <span class="panel-banner-badge">Sandbox</span>
+  <span class="panel-banner-text"><strong>Demo sends, wiped by Reset.</strong> Each send writes a tagged practice row to drive the live feed and analytics below — hit <em>Reset</em> to clear them. To enter records that <em>stay</em>, use the <em>Intake</em> tab.</span>
+</div>
+
 <div class="pipeline">
 
   <!-- compose: controls + live HL7 preview -->

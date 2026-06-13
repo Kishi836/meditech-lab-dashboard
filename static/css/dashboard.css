@@ -1120,6 +1120,57 @@ body {
 
 /* ───────────── Pipeline panel ───────────── */
 
+/* ── Panel mode banner — tells Intake (real data) apart from Pipeline
+      (sandbox). Two variants share one layout, differ only in colour. ── */
+
+.panel-banner {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-top: 18px;
+  padding: 11px 15px;
+  border: 1px solid var(--border);
+  border-left-width: 4px;
+  border-radius: 10px;
+  background: var(--surf);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.panel-banner-icon {
+  flex: none;
+  width: 19px;
+  height: 19px;
+}
+
+.panel-banner-badge {
+  flex: none;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  border-radius: 5px;
+  padding: 3px 9px;
+}
+
+.panel-banner-text { color: var(--muted); }
+.panel-banner-text strong { color: var(--text); }
+
+.panel-banner-real {
+  border-left-color: var(--green);
+  background: rgba(15, 138, 95, 0.06);
+  color: var(--green);
+}
+.panel-banner-real .panel-banner-badge { background: var(--green); }
+
+.panel-banner-sandbox {
+  border-left-color: var(--yellow);
+  background: rgba(183, 121, 31, 0.07);
+  color: var(--yellow);
+}
+.panel-banner-sandbox .panel-banner-badge { background: var(--yellow); }
+
 .pipeline {
   display: flex;
   flex-direction: column;
@@ -1139,6 +1190,7 @@ body {
 .pipeline-controls {
   background: var(--surf);
   border: 1px solid var(--border);
+  border-left: 3px solid var(--yellow);   /* amber = demo/sandbox panel */
   border-radius: 10px;
   padding: 16px;
   display: flex;
@@ -1651,6 +1703,7 @@ body {
 .intake-card {
   background: var(--surf);
   border: 1px solid var(--border);
+  border-left: 3px solid var(--green);   /* green = real-data panel */
   border-radius: 10px;
   padding: 18px;
   display: flex;
@@ -2014,6 +2067,22 @@ body {
   height: 19px;
   color: var(--blue);
 }
+
+/* Real-data vs sandbox tags on the Intake/Pipeline help cards —
+   mirror the in-panel banners so the distinction reads everywhere. */
+.help-card-tag {
+  margin-left: auto;
+  flex: none;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  border-radius: 5px;
+  padding: 2px 7px;
+}
+.help-card-tag-real    { background: var(--green); }
+.help-card-tag-sandbox { background: var(--yellow); }
 
 /* ───────────── Toasts ───────────── */
 

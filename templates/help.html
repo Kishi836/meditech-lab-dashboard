@@ -29,8 +29,9 @@
     <div class="help-card-head">
       <span class="help-card-icon"><svg class="icon"><use href="#icon-intake"/></svg></span>
       <h2>Intake</h2>
+      <span class="help-card-tag help-card-tag-real">Real data</span>
     </div>
-    <p class="help-what">Add real data the way a hospital does: <strong>Register Patient</strong> emits an <strong>ADT^A04</strong> admission message and <strong>Record Result</strong> emits an <strong>ORU^R01</strong> lab result — each one built live as you type, then sent through the full six-stage pipeline before the row lands in Postgres.</p>
+    <p class="help-what">Add <strong>real, permanent</strong> data the way a hospital does: <strong>Register Patient</strong> emits an <strong>ADT^A04</strong> admission message and <strong>Record Result</strong> emits an <strong>ORU^R01</strong> lab result — each one built live as you type, then sent through the full six-stage pipeline before the row lands in Postgres and shows up under Patients.</p>
     <p class="help-concept"><span class="help-label">Concept</span> Data capture as document flow — in real hospitals, new records enter as HL7 messages, not raw database writes.</p>
     <p class="help-try"><span class="help-try-icon">&#9656;</span> Try: register a patient and watch the packet travel the pipeline, then record an <strong>HbA1c of 9.5&nbsp;%</strong> for them — it's flagged critical and shows up in the Pipeline tab's critical-values panel.</p>
   </div>
@@ -59,10 +60,11 @@
     <div class="help-card-head">
       <span class="help-card-icon"><svg class="icon"><use href="#icon-pipeline"/></svg></span>
       <h2>Pipeline</h2>
+      <span class="help-card-tag help-card-tag-sandbox">Sandbox</span>
     </div>
-    <p class="help-what">Build an <strong>HL7 v2.5</strong> message from a patient, then watch it flow through a hospital integration stack: routing &rarr; database &rarr; search index &rarr; dashboards &rarr; archive.</p>
+    <p class="help-what">A <strong>demo sandbox</strong> for interoperability: build an <strong>HL7 v2.5</strong> message from a patient, then watch it flow through a hospital integration stack — routing &rarr; database &rarr; search index &rarr; dashboards &rarr; archive — and drive the live feed + analytics. Sends here are tagged practice rows.</p>
     <p class="help-concept"><span class="help-label">Concept</span> Interoperability — the HL7 messaging that keeps hospital systems in sync.</p>
-    <p class="help-try"><span class="help-try-icon">&#9656;</span> Try: pick <strong>PT-001</strong> + <strong>ORU^R01</strong>, hit <strong>Send</strong>, watch the six stages animate, then find the new row under Patients. <strong>Reset</strong> cleans up these demo sends — data you entered via <strong>Intake</strong> is real and stays.</p>
+    <p class="help-try"><span class="help-try-icon">&#9656;</span> Try: pick <strong>PT-001</strong> + <strong>ORU^R01</strong>, hit <strong>Send</strong>, watch the six stages animate and the feed/charts update. <strong>Reset</strong> wipes these demo sends — to enter records that <em>stay</em>, use <strong>Intake</strong>.</p>
   </div>
 
 </div>
